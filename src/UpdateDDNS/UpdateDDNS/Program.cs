@@ -146,7 +146,7 @@ namespace BOG.UpdateDDNS
             }
             catch (Exception err)
             {
-                Console.WriteLine(DetailedException.WithMachineContent(ref err));
+                Console.WriteLine(err.Message);
                 updateAction.Result = UpdateAction.State.Error;
                 updateAction.Notes = err.Message;
             }

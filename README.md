@@ -12,7 +12,7 @@ a home computer operating within the network domain: as such, it does not suppor
 multiple IP addresses.
 
 To create the configuration file, simply run BOG.UpdateDDNS with no parameters the 
-first time.  It will create the configuration file with two DDNS services using sample
+first time.  It will create the configuration file with three DDNS services using sample
 entries.  In most cases, only one is needed.
 
 ```
@@ -42,9 +42,9 @@ To setup the configurations:
 - The Url property represents the call to the DDNS service RA-API endpoint, complete with credentials needed for updating the domain's IP address.  Note: only one address is supported.  It also contains a placeholder {IP}, where the current IP address appears in the Url.
 
 When the application is executed, the only parameter specified is the name property value
-for the DNS service in the configuraton (e.g. GoogleDomains, DuckDns).  The application
-will also append to a log file, which has the same root name and folder as the json 
-configuration file but uses the extension "log".
+for the DNS service in the configuraton (e.g. GoogleDomains, DuckDns, DynDns ... or whatever 
+you are using).  The application will also append to a log file, which has the same root name 
+and folder as the json configuration file but uses the extension "log".
 
 Also, the current and previous IP addresses are recorded in additional properties of the 
 configuration file when the application is complete.
