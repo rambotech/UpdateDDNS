@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "UpdateDDNS": {
+      "commandName": "Project",
+      "commandLineArgs": "GoogleDomains"
+    }
+  }
+}
