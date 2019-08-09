@@ -14,9 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="start_me.bat">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="start_me.sh">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

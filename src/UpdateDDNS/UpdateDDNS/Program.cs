@@ -24,7 +24,8 @@ namespace BOG.UpdateDDNS
             try
             {
                 var a = new AssemblyVersion();
-                Console.WriteLine($"UpdateDDNS, v{a.Version} {a.BuildDate}, {Path.GetFileName(a.Filename)}");
+                Console.WriteLine("==================");
+                Console.WriteLine($"{Path.GetFileName(a.Filename)}, v{a.Version}");
                 Console.WriteLine("==================");
                 Console.WriteLine();
 
@@ -84,7 +85,9 @@ namespace BOG.UpdateDDNS
                     Console.WriteLine($"Loading config file: {configFile}");
                     LoadConfiguration(configFile);
 
-                    Console.WriteLine($"Extracting config: {args[0]}");
+                    var configName = args[0].Replace("\r", "").Replace("\n", "");   // linux/win precaution
+
+                    Console.WriteLine($"Extracting config: {configName}");
                     var thisEndpoint = configuration
                         .Where(o => string.Compare(o.Name, args[0], false) == 0)
                         .FirstOrDefault();
@@ -162,6 +165,7 @@ namespace BOG.UpdateDDNS
                     exitCode = 0;
                     break;
             }
+            Console.WriteLine();
             System.Environment.Exit(exitCode);
         }
 
