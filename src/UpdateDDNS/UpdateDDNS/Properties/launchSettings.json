@@ -2,7 +2,7 @@
   "profiles": {
     "UpdateDDNS": {
       "commandName": "Project",
-      "commandLineArgs": "--service GoogleDomains --path /home/pi"
+      "commandLineArgs": "-s GoogleDomains"
     }
   }
 }

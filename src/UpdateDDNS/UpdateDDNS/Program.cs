@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Runtime.InteropServices;
-using System.Web;
-using System.Linq;
-using BOG.SwissArmyKnife;
+﻿using BOG.SwissArmyKnife;
 using BOG.SwissArmyKnife.Extensions;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Runtime.InteropServices;
 
 namespace BOG.UpdateDDNS
 {
@@ -79,34 +78,16 @@ namespace BOG.UpdateDDNS
                 var error = ReadArguments(args);
                 if (!string.IsNullOrWhiteSpace(error))
                 {
-                    Console.WriteLine("One or more invalid command-line arguments");
+                    Console.WriteLine($"One or more invalid command-line arguments: {error}");
                     updateAction.Result = UpdateAction.State.InvalidParameters;
-                    updateAction.Name = error;
+                    updateAction.Notes = error;
                     Help();
                 }
+                configFile = BuildConfigFilePath() + Path.GetFileNameWithoutExtension(a.Filename) + ".json";
+                logFile = BuildConfigFilePath() + Path.GetFileNameWithoutExtension(a.Filename) + ".log";
+
                 if (updateAction.Result == UpdateAction.State.Unknown)
                 {
-                    var localFolder = "$HOME";
-                    if (!string.IsNullOrWhiteSpace(argValues["PATH"]))
-                    {
-                        localFolder = argValues["PATH"];
-                    }
-                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    {
-                        localFolder = localFolder.Replace(@"/", @"\").ResolvePathPlaceholders();
-                        localFolder = localFolder.Replace("$HOME", Environment.GetEnvironmentVariable("USERPROFILE"));
-                        while (localFolder[localFolder.Length - 1] == '\\') localFolder = localFolder.Substring(0, localFolder.Length - 1);
-                        localFolder += "\\";
-                    }
-                    else
-                    {
-                        localFolder = localFolder.Replace("$HOME", Environment.GetEnvironmentVariable("HOME")).ResolvePathPlaceholders();
-                        while (localFolder[localFolder.Length - 1] == '/') localFolder = localFolder.Substring(0, localFolder.Length - 1);
-                        localFolder = localFolder + "/";
-                    }
-
-                    configFile = localFolder + Path.GetFileNameWithoutExtension(a.Filename) + ".json";
-                    logFile = localFolder + Path.GetFileNameWithoutExtension(a.Filename) + ".log";
                     if (!File.Exists(configFile))
                     {
                         if (string.IsNullOrWhiteSpace(argValues["PATH"]))
@@ -215,23 +196,45 @@ namespace BOG.UpdateDDNS
                 updateAction.Result = UpdateAction.State.Error;
                 updateAction.Notes = err.Message;
             }
-            LogUpdateAction(logFile, updateAction);
-            var exitCode = 0;
             switch (updateAction.Result)
             {
                 case UpdateAction.State.Error:
                 case UpdateAction.State.Unknown:
-                    exitCode = 2;
+                    updateAction.ExitCode = 2;
                     break;
                 case UpdateAction.State.InvalidParameters:
-                    exitCode = 1;
+                    updateAction.ExitCode = 1;
                     break;
                 default:
-                    exitCode = 0;
+                    updateAction.ExitCode = 0;
                     break;
             }
+            LogUpdateAction(logFile, updateAction);
             Console.WriteLine();
-            System.Environment.Exit(exitCode);
+            System.Environment.Exit(updateAction.ExitCode);
+        }
+
+        static string BuildConfigFilePath()
+        {
+            var localFolder = "$HOME";
+            if (!string.IsNullOrWhiteSpace(argValues["PATH"]))
+            {
+                localFolder = argValues["PATH"];
+            }
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                localFolder = localFolder.Replace(@"/", @"\").ResolvePathPlaceholders();
+                localFolder = localFolder.Replace("$HOME", Environment.GetEnvironmentVariable("USERPROFILE"));
+                while (localFolder[localFolder.Length - 1] == '\\') localFolder = localFolder.Substring(0, localFolder.Length - 1);
+                localFolder += "\\";
+            }
+            else
+            {
+                localFolder = localFolder.Replace("$HOME", Environment.GetEnvironmentVariable("HOME")).ResolvePathPlaceholders();
+                while (localFolder[localFolder.Length - 1] == '/') localFolder = localFolder.Substring(0, localFolder.Length - 1);
+                localFolder = localFolder + "/";
+            }
+            return localFolder;
         }
 
         static void SaveConfiguration(string filename)
@@ -258,9 +261,9 @@ namespace BOG.UpdateDDNS
                 if (writeHeader)
                 {
                     sw.WriteLine(string.Format(
-                            "{0,-20} {1,-10} {2,-10} {3,-20} {4,-39} {5}",
+                            "{0,-30} {1,1} {2,-20} {3,-20} {4,-39} {5}",
                             "OccurredOn",
-                            string.Empty,
+                            "X",
                             "Result",
                             "Name",
                             "WanIpAddress",
@@ -268,8 +271,9 @@ namespace BOG.UpdateDDNS
                         );
                 }
                 sw.WriteLine(string.Format(
-                        "{0:s} {0,-10:dddd} {1,-10} {2,-20} {3,-39} {4}",
+                        "{0:s} {0,-10:dddd} {1,1} {2,-20} {3,-20} {4,-39} {5}",
                         action.Occurred,
+                        action.ExitCode,
                         action.Result,
                         action.Name,
                         action.WanIpAddress,
@@ -282,13 +286,13 @@ namespace BOG.UpdateDDNS
     public class DynamicDnsService
     {
         [JsonProperty]
-        public string Name { get; set; } = "GoogleDomainsDDNS";
+        public string Name { get; set; } = string.Empty;
 
         [JsonProperty]
-        public string Url { get; set; } = "https://user:password@domains.google.com/nic/update?hostname=myhostname.com&myip={IP}";
+        public string Url { get; set; } = string.Empty;
 
         [JsonProperty]
-        public string Domain { get; set; } = "my-domain-name.ddns-domain.com";
+        public string Domain { get; set; } = string.Empty;
 
         [JsonProperty]
         public string PreviousWanIP { get; set; } = string.Empty;
@@ -318,7 +322,10 @@ namespace BOG.UpdateDDNS
         public string Name { get; set; } = "*none*";
 
         [JsonProperty]
-        public State Result { get; set; } = State.InvalidParameters;
+        public State Result { get; set; } = State.Unknown;
+
+        [JsonProperty]
+        public int ExitCode { get; set; } = 99;
 
         [JsonProperty]
         public string WanIpAddress { get; set; }
