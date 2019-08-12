@@ -13,7 +13,54 @@ namespace BOG.UpdateDDNS
 {
     class Program
     {
-        static List<EndpointDDNS> configuration = new List<EndpointDDNS>();
+        static List<DynamicDnsService> configuration = new List<DynamicDnsService>();
+        static Dictionary<string, string> argAlias = new Dictionary<string, string>()
+        {
+            { "--path", "PATH" },
+            { "-p", "PATH" },
+            { "--service", "SERVICE" },
+            { "-s", "SERVICE" },
+        };
+        static Dictionary<string, string> argValues = new Dictionary<string, string>()
+        {
+            { "PATH", "" },
+            { "SERVICE", "" }
+        };
+
+        static string ReadArguments(string[] args)
+        {
+            var key = string.Empty;
+            if (args.Length > 0)
+            {
+                for (var index = 0; index < args.Length; index++)
+                {
+                    if (string.IsNullOrWhiteSpace(key))
+                    {
+                        if (!argAlias.ContainsKey(args[index]))
+                        {
+                            return $"Key {args[index]} is unknown.";
+                        }
+                        key = argAlias[args[index]];
+                        continue;
+                    }
+                    argValues[key] = args[index];
+                    key = string.Empty;
+                }
+                if (!string.IsNullOrWhiteSpace(key))
+                {
+                    return $"Key {args[args.Length - 1]} specified with no value.";
+                }
+            }
+            return string.Empty;
+        }
+
+        static void Help()
+        {
+            Console.WriteLine();
+            Console.WriteLine("BOG.UpdateDDNS [--path {path}] --service {serviceName}");
+            Console.WriteLine("  --path: (optional) overrides the default path for config and log files.");
+            Console.WriteLine("  --service: name of DDNS service name to update.");
+        }
 
         static void Main(string[] args)
         {
@@ -28,123 +75,138 @@ namespace BOG.UpdateDDNS
                 Console.WriteLine($"{Path.GetFileName(a.Filename)}, v{a.Version}");
                 Console.WriteLine("==================");
                 Console.WriteLine();
-
-                var localFolder = "$HOME";
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                Console.WriteLine("Read command line arguments...");
+                var error = ReadArguments(args);
+                if (!string.IsNullOrWhiteSpace(error))
                 {
-                    localFolder = localFolder.Replace(@"/", @"\").ResolvePathPlaceholders();
-                    localFolder = localFolder.Replace("$HOME", Environment.GetEnvironmentVariable("USERPROFILE"));
-                    while (localFolder[localFolder.Length - 1] == '\\') localFolder = localFolder.Substring(0, localFolder.Length - 1);
-                    localFolder += "\\";
+                    Console.WriteLine("One or more invalid command-line arguments");
+                    updateAction.Result = UpdateAction.State.InvalidParameters;
+                    updateAction.Name = error;
+                    Help();
                 }
-                else
-                {
-                    localFolder = localFolder.Replace("$HOME", Environment.GetEnvironmentVariable("HOME"));
-                    while (localFolder[localFolder.Length - 1] == '/') localFolder = localFolder.Substring(0, localFolder.Length - 1);
-                    localFolder = localFolder + "/";
-                }
-
-                configFile = localFolder + Path.GetFileNameWithoutExtension(a.Filename) + ".json";
-                logFile = localFolder + Path.GetFileNameWithoutExtension(a.Filename) + ".log";
-                if (!File.Exists(configFile))
-                {
-                    if (args.Length == 0)
-                    {
-                        Console.WriteLine($"Creating sample config file: {configFile}");
-                        configuration.Add(new EndpointDDNS
-                        {
-                            Name = "DuckDns",
-                            Domain = "myhost.duckdns.org",
-                            Url = "https://www.duckdns.org/update?domains=myhost,myotherhost&token=aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee&ip={IP}"
-                        });
-                        configuration.Add(new EndpointDDNS
-                        {
-                            Name = "GoogleDomains",
-                            Domain = "myhost.mydomain.org",
-                            Url = "https://user:password@domains.google.com/nic/update?hostname=myhost.mydomain.org&myip={IP}"
-                        });
-                        configuration.Add(new EndpointDDNS
-                        {
-                            Name = "DynDns",
-                            Domain = "myhost.dyndns.org",
-                            Url = "https://user:updater-client-key@members.dyndns.org/v3/update?hostname=myhost&myip={IP}"
-                        });
-                        SaveConfiguration(configFile);
-                        updateAction.Result = UpdateAction.State.Minor;
-                    }
-                    else
-                    {
-                        throw new FileNotFoundException($"Missing configuration file: {configFile}");
-                    }
-                }
-
                 if (updateAction.Result == UpdateAction.State.Unknown)
                 {
-                    if (args.Length != 1) throw new ArgumentException("Requires a single argument with the name of the endpoint to use.");
-
-                    Console.WriteLine($"Loading config file: {configFile}");
-                    LoadConfiguration(configFile);
-
-                    var configName = args[0].Replace("\r", "").Replace("\n", "");   // linux/win precaution
-
-                    Console.WriteLine($"Extracting config: {configName}");
-                    var thisEndpoint = configuration
-                        .Where(o => string.Compare(o.Name, args[0], false) == 0)
-                        .FirstOrDefault();
-
-                    if (thisEndpoint == null)
+                    var localFolder = "$HOME";
+                    if (!string.IsNullOrWhiteSpace(argValues["PATH"]))
                     {
-                        throw new Exception($"No endpoint found in config file using this name: {args[0]}");
+                        localFolder = argValues["PATH"];
                     }
-                    updateAction.Name = thisEndpoint.Name;
-
-                    Console.WriteLine($"Querying current WAN IP address via: https://domains.google.com/checkip");
-
-                    var client = new WebClient();
-                    client.Headers.Add("Accept", "text/plain");
-
-                    var currentWanIp = client.DownloadString("https://domains.google.com/checkip");
-                    updateAction.WanIpAddress = currentWanIp;
-
-                    thisEndpoint.LastCheck = DateTime.Now;
-                    SaveConfiguration(configFile);
-
-                    if (string.Compare(currentWanIp, thisEndpoint.CurrentWanIP, false) == 0)
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
-                        Console.WriteLine("IP address unchanged.");
-                        updateAction.Result = UpdateAction.State.NoChange;
+                        localFolder = localFolder.Replace(@"/", @"\").ResolvePathPlaceholders();
+                        localFolder = localFolder.Replace("$HOME", Environment.GetEnvironmentVariable("USERPROFILE"));
+                        while (localFolder[localFolder.Length - 1] == '\\') localFolder = localFolder.Substring(0, localFolder.Length - 1);
+                        localFolder += "\\";
                     }
                     else
                     {
-                        updateAction.Result = UpdateAction.State.Updated;
-                        Console.WriteLine($"IP address change detected from {thisEndpoint.PreviousWanIP} to {currentWanIp}");
-                        Console.WriteLine($"Sending change request to DDNS service: {args[0]}");
+                        localFolder = localFolder.Replace("$HOME", Environment.GetEnvironmentVariable("HOME")).ResolvePathPlaceholders();
+                        while (localFolder[localFolder.Length - 1] == '/') localFolder = localFolder.Substring(0, localFolder.Length - 1);
+                        localFolder = localFolder + "/";
+                    }
 
-                        var url = thisEndpoint.Url.Replace("{IP}", currentWanIp);
-                        var uri = new Uri(url);
-
-                        client = new WebClient();
-                        client.Headers.Add("Accept", "*/*");
-                        if (!string.IsNullOrWhiteSpace(uri.UserInfo))
+                    configFile = localFolder + Path.GetFileNameWithoutExtension(a.Filename) + ".json";
+                    logFile = localFolder + Path.GetFileNameWithoutExtension(a.Filename) + ".log";
+                    if (!File.Exists(configFile))
+                    {
+                        if (string.IsNullOrWhiteSpace(argValues["PATH"]))
                         {
-                            byte[] toEncodeAsBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(uri.UserInfo);
-                            var auth = System.Convert.ToBase64String(toEncodeAsBytes);
-                            client.Headers.Add("Authorization", $"Basic {auth}");
+                            Console.WriteLine($"Creating sample config file: {configFile}");
+                            configuration.Add(new DynamicDnsService
+                            {
+                                Name = "DuckDns",
+                                Domain = "myhost.duckdns.org",
+                                Url = "https://www.duckdns.org/update?domains=myhost,myotherhost&token=aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee&ip={IP}"
+                            });
+                            configuration.Add(new DynamicDnsService
+                            {
+                                Name = "GoogleDomains",
+                                Domain = "myhost.mydomain.org",
+                                Url = "https://user:password@domains.google.com/nic/update?hostname=myhost.mydomain.org&myip={IP}"
+                            });
+                            configuration.Add(new DynamicDnsService
+                            {
+                                Name = "DynDns",
+                                Domain = "myhost.dyndns.org",
+                                Url = "https://user:updater-client-key@members.dyndns.org/v3/update?hostname=myhost&myip={IP}"
+                            });
+                            SaveConfiguration(configFile);
+                            updateAction.Result = UpdateAction.State.Minor;
                         }
-                        var response = client.DownloadString(url);
-                        Console.WriteLine($"Server Response: {response}");
-                        updateAction.Notes = response;
-                        if (response.ToUpper().Contains("OK") || response.ToUpper().Contains("NOCHG"))
+                        else
                         {
-                            Console.WriteLine("Valid response received");
-                            thisEndpoint.PreviousWanIP = thisEndpoint.CurrentWanIP;
-                            thisEndpoint.PreviousWanIPdetected = thisEndpoint.CurrentWanIPdetected;
-                            thisEndpoint.CurrentWanIP = currentWanIp;
-                            thisEndpoint.CurrentWanIPdetected = DateTime.Now;
+                            throw new FileNotFoundException($"Missing configuration file: {configFile}");
                         }
                     }
-                    Console.WriteLine("Save configuration");
-                    SaveConfiguration(configFile);
+
+                    if (updateAction.Result == UpdateAction.State.Unknown)
+                    {
+                        var configName = argValues["SERVICE"];
+                        if (string.IsNullOrWhiteSpace(configName)) throw new ArgumentException("Missing service argument.");
+                        configName = configName.Replace("\r", "").Replace("\n", "");   // linux/win precaution
+
+                        Console.WriteLine($"Loading config file: {configFile}");
+                        LoadConfiguration(configFile);
+
+                        Console.WriteLine($"Extracting config for service: {configName}");
+                        var thisEndpoint = configuration
+                            .Where(o => string.Compare(o.Name, configName, false) == 0)
+                            .FirstOrDefault();
+
+                        if (thisEndpoint == null)
+                        {
+                            throw new Exception($"No service found in config file for {args[0]}");
+                        }
+                        updateAction.Name = thisEndpoint.Name;
+
+                        Console.WriteLine($"Querying current WAN IP address via: https://domains.google.com/checkip");
+
+                        var client = new WebClient();
+                        client.Headers.Add("Accept", "text/plain");
+
+                        var currentWanIp = client.DownloadString("https://domains.google.com/checkip");
+                        updateAction.WanIpAddress = currentWanIp;
+
+                        thisEndpoint.LastCheck = DateTime.Now;
+                        SaveConfiguration(configFile);
+
+                        if (string.Compare(currentWanIp, thisEndpoint.CurrentWanIP, false) == 0)
+                        {
+                            Console.WriteLine("IP address unchanged.");
+                            updateAction.Result = UpdateAction.State.NoChange;
+                        }
+                        else
+                        {
+                            updateAction.Result = UpdateAction.State.Updated;
+                            Console.WriteLine($"IP address change detected from {thisEndpoint.PreviousWanIP} to {currentWanIp}");
+                            Console.WriteLine($"Sending change request to DDNS service: {args[0]}");
+
+                            var url = thisEndpoint.Url.Replace("{IP}", currentWanIp);
+                            var uri = new Uri(url);
+
+                            client = new WebClient();
+                            client.Headers.Add("Accept", "*/*");
+                            if (!string.IsNullOrWhiteSpace(uri.UserInfo))
+                            {
+                                byte[] toEncodeAsBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(uri.UserInfo);
+                                var auth = System.Convert.ToBase64String(toEncodeAsBytes);
+                                client.Headers.Add("Authorization", $"Basic {auth}");
+                            }
+                            var response = client.DownloadString(url);
+                            Console.WriteLine($"Server Response: {response}");
+                            updateAction.Notes = response;
+                            if (response.ToUpper().Contains("OK") || response.ToUpper().Contains("NOCHG"))
+                            {
+                                Console.WriteLine("Valid response received");
+                                thisEndpoint.PreviousWanIP = thisEndpoint.CurrentWanIP;
+                                thisEndpoint.PreviousWanIPdetected = thisEndpoint.CurrentWanIPdetected;
+                                thisEndpoint.CurrentWanIP = currentWanIp;
+                                thisEndpoint.CurrentWanIPdetected = DateTime.Now;
+                            }
+                        }
+                        Console.WriteLine("Save configuration");
+                        SaveConfiguration(configFile);
+                    }
                 }
             }
             catch (Exception err)
@@ -159,6 +221,9 @@ namespace BOG.UpdateDDNS
             {
                 case UpdateAction.State.Error:
                 case UpdateAction.State.Unknown:
+                    exitCode = 2;
+                    break;
+                case UpdateAction.State.InvalidParameters:
                     exitCode = 1;
                     break;
                 default:
@@ -173,7 +238,7 @@ namespace BOG.UpdateDDNS
         {
             using (var sw = new StreamWriter(filename))
             {
-                sw.Write(BOG.SwissArmyKnife.Serializer<List<EndpointDDNS>>.ToJson(configuration));
+                sw.Write(BOG.SwissArmyKnife.Serializer<List<DynamicDnsService>>.ToJson(configuration));
             }
         }
 
@@ -181,7 +246,7 @@ namespace BOG.UpdateDDNS
         {
             using (var sr = new StreamReader(filename))
             {
-                configuration = BOG.SwissArmyKnife.Serializer<List<EndpointDDNS>>.FromJson(sr.ReadToEnd());
+                configuration = BOG.SwissArmyKnife.Serializer<List<DynamicDnsService>>.FromJson(sr.ReadToEnd());
             }
         }
 
@@ -214,7 +279,7 @@ namespace BOG.UpdateDDNS
         }
     }
 
-    public class EndpointDDNS
+    public class DynamicDnsService
     {
         [JsonProperty]
         public string Name { get; set; } = "GoogleDomainsDDNS";
@@ -244,7 +309,7 @@ namespace BOG.UpdateDDNS
     [JsonObject]
     public class UpdateAction
     {
-        public enum State : int { Unknown = 0, Error = 1, NoChange = 2, Updated = 3, Minor = 4 }
+        public enum State : int { Unknown = 0, InvalidParameters = 1, Error = 2, NoChange = 3, Updated = 4, Minor = 5 }
 
         [JsonProperty]
         public DateTime Occurred { get; set; } = DateTime.Now;
@@ -253,7 +318,7 @@ namespace BOG.UpdateDDNS
         public string Name { get; set; } = "*none*";
 
         [JsonProperty]
-        public State Result { get; set; } = State.Unknown;
+        public State Result { get; set; } = State.InvalidParameters;
 
         [JsonProperty]
         public string WanIpAddress { get; set; }
