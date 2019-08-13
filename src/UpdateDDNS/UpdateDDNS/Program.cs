@@ -22,7 +22,7 @@ namespace BOG.UpdateDDNS
         };
         static Dictionary<string, string> argValues = new Dictionary<string, string>()
         {
-            { "PATH", "" },
+            { "PATH", "$HOME" },
             { "SERVICE", "" }
         };
 
@@ -216,11 +216,8 @@ namespace BOG.UpdateDDNS
 
         static string BuildConfigFilePath()
         {
-            var localFolder = "$HOME";
-            if (!string.IsNullOrWhiteSpace(argValues["PATH"]))
-            {
-                localFolder = argValues["PATH"];
-            }
+            var localFolder = argValues["PATH"];
+            
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 localFolder = localFolder.Replace(@"/", @"\").ResolvePathPlaceholders();
