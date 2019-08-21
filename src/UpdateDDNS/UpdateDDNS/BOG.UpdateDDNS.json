@@ -9,8 +9,8 @@
   },
   {
     "Name": "DuckDNS",
-    "Url": "https://www.duckdns.org/update?domains=fl1-jhrbj&token=ac740b31-075f-4834-88c5-7f02219b0daa&ip={IP}",
-    "Domain": "fl1-jhrbj.duckdns.org",
+    "Url": "https://www.duckdns.org/update?domains=fl1-jhrbj&token=aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee&ip={IP}",
+    "Domain": "myotherhostname.duckdns.org",
     "PreviousWanIP": "",
     "CurrentWanIP": "",
     "LastRun": "2019-08-07T17:19:37.4445957-04:00"
