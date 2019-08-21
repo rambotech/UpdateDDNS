@@ -91,6 +91,31 @@ configuration file when the application is complete.
 - 1 == Invalid Parameters
 - 2 == Error/Failure
 
+### Cron and recommended deployment on Linux (including Raspberry Pi)
+
+To make the proper build, open a console window and execute the following command with the current directory set to where the file UpdateDDNS.csproj resides.  The
+resulting deployment file set for will be in publish\linux-arm (for the Raspberry Pi), or publish\linux-x64 for 64-bit Linux systems.
+
+```
+for %f in (linux-arm linux-x64) do dotnet publish -c release -o publish\%f -r %f
+```
+
+I recommend deployment as follows under the linux account's $HOME folder:
+- create a folder named *config*, andd copy the file BOG.UpdateDDNS.json to this folder, and set the DDNS service parameters
+- create a folder named *apps*
+- create a folder named *updateddns* under the apps folder, and copy the deployment file set to that folder.
+
+Use *sudo crontab -e* to add the following lines (note: subsititute pi for the account name if different).
+
+```
+# Dynamic DNS updating (every 15 minutes)
+1,16,31,46 * * * * /home/pi/apps/updateddns/BOG.UpdateDDNS --service GoogleDomains --path /home/pi/config
+2,17,32,47 * * * * /home/pi/apps/updateddns/BOG.UpdateDDNS --service DuckDns --path /home/pi/config
+```
+
+*Note: UpdateDDNS does a soft update. It will always first check the current public IP address for the dynamic dns host name, and only update
+the DDNS service if a difference is detected.  The 15-minute interval will almost always be only a check.*
+
 ***
 
 That's it.  See your dynamic DNS provider's documentation for the specific format of the url 

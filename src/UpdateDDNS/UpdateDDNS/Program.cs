@@ -211,7 +211,11 @@ namespace BOG.UpdateDDNS
             }
             LogUpdateAction(logFile, updateAction);
             Console.WriteLine();
-            System.Environment.Exit(updateAction.ExitCode);
+#if DEBUG
+			Console.WriteLine($"Exit code: {updateAction.ExitCode} ... press ENTER");
+			Console.ReadLine();
+#endif
+			System.Environment.Exit(updateAction.ExitCode);
         }
 
         static string BuildConfigFilePath()

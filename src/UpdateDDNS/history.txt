@@ -1,0 +1,9 @@
+Revision history:
+
+08/08/2019 -- 1.0.0
+ * Original version
+
+08/21/2019 -- 1.0.1
+ * Expand README.md with basic deployment example
+ * Add ENTER press to close console window in DEBUG builds
+
