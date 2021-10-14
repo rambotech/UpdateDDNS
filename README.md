@@ -1,8 +1,8 @@
 | *branch* | *status*  |
 | :--- | :---: |
-| master    | [![Build status](https://api.travis-ci.com/rambotech/UpdateDDNS.svg?branch=master)](https://api.travis-ci.com/rambotech/BOG.DropZone) |
-| release   | [![Build status](https://api.travis-ci.com/rambotech/UpdateDDNS.svg?branch=release)](https://api.travis-ci.com/rambotech/BOG.DropZone) |
-| develop   | [![Build status](https://api.travis-ci.com/rambotech/UpdateDDNS.svg?branch=develop)](https://api.travis-ci.com/rambotech/BOG.DropZone) |
+| master    | [![Build Status](https://app.travis-ci.com/rambotech/UpdateDDNS.svg?branch=master)](https://app.travis-ci.com/rambotech/UpdateDDNS) |
+| release   | [![Build status](https://api.travis-ci.com/rambotech/UpdateDDNS.svg?branch=release)](https://app.travis-ci.com/rambotech/BOG.DropZone) |
+| develop   | [![Build status](https://api.travis-ci.com/rambotech/UpdateDDNS.svg?branch=develop)](https://app.travis-ci.com/rambotech/BOG.DropZone) |
 
 # UpdateDDNS
 
