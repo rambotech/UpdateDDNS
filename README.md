@@ -1,3 +1,9 @@
+| *branch* | *status*  |
+| :--- | :---: | :---: | :---: |
+| master    | [![Build status](https://api.travis-ci.com/rambotech/UpdateDDNS.svg?branch=master)](https://travis-ci.com/rambotech/BOG.DropZone) |
+| release   | [![Build status](https://api.travis-ci.com/rambotech/UpdateDDNS.svg?branch=release)](https://travis-ci.com/rambotech/BOG.DropZone) |
+| develop   | [![Build status](https://api.travis-ci.com/rambotech/UpdateDDNS.svg?branch=develop)](https://travis-ci.com/rambotech/BOG.DropZone) |
+
 # UpdateDDNS
 
 A simple and straight-forward dotnet core console app, which will update any DDNS 
