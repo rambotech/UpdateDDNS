@@ -6,6 +6,11 @@
     <RootNamespace>BOG.UpdateDDNS</RootNamespace>
     <AssemblyName>BOG.UpdateDDNS</AssemblyName>
     <Version>1.0.1</Version>
+    <StartupObject>BOG.UpdateDDNS.Program</StartupObject>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
