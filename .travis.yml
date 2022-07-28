@@ -3,8 +3,8 @@ solution: ./src/UpdateDDNS/UpdateDDNS.sln
 mono: none
 dotnet: 5.0.2
 script:
-- chmod +x ./deploy.sh 
-- ./deploy.sh
+- chmod +x ./build_me.sh 
+- ./build_me.sh
 
 # safelist
 branches:
