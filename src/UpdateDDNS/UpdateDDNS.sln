@@ -7,8 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UpdateDDNS", "UpdateDDNS\Up
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{1D43340F-7EED-44A1-8255-149FB5FFBAFF}"
 	ProjectSection(SolutionItems) = preProject
-		.gitattributes = .gitattributes
-		.gitignore = .gitignore
+		..\..\.gitattributes = ..\..\.gitattributes
+		..\..\.gitignore = ..\..\.gitignore
 		..\..\.travis.yml = ..\..\.travis.yml
 		history.txt = history.txt
 		..\..\build_me.sh = ..\..\build_me.sh
