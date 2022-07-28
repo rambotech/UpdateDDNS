@@ -1,8 +1,8 @@
 ###############################################################################
 # Set specific behavior to override normalizing line endings.
 ###############################################################################
-build_me.sh text eol=lf
-.travis.yml text eol=lf
+# build_me.sh text eol=lf
+#.travis.yml text eol=lf
 
 ###############################################################################
 # Set default behavior to automatically normalize line endings.
