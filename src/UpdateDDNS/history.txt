@@ -7,3 +7,11 @@ Revision history:
  * Expand README.md with basic deployment example
  * Add ENTER press to close console window in DEBUG builds
 
+03/12/2023 -- 1.1
+ * Adds argument to specify either IPv4 (A record) or IPv6 (AAAA record) update.
+ * Uses https://api(64).ipify.org to detemine current WAN IP addresses, to overcome Google checkip prejudice.
+ * Adds argunment to force update
+ * Extended v2 class config file. Auto converts from old file, but resets the addresses an capture date.
+ * Remove Travis components: switch to GitHub Actions
+ * Update to .NET 7 (7.0.200); Upgrade NuGet packages.
+

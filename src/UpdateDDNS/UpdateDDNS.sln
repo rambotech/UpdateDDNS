@@ -9,9 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 	ProjectSection(SolutionItems) = preProject
 		..\..\.gitattributes = ..\..\.gitattributes
 		..\..\.gitignore = ..\..\.gitignore
-		..\..\.travis.yml = ..\..\.travis.yml
+		global.json = global.json
 		history.txt = history.txt
-		..\..\build_me.sh = ..\..\build_me.sh
 		..\..\README.md = ..\..\README.md
 	EndProjectSection
 EndProject
