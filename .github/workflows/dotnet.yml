@@ -9,9 +9,12 @@ on:
   pull_request:
     branches: [ "master" ]
 
+defaults:
+  run:
+    working-directory: src/UpdateDDNS
+
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -21,10 +24,8 @@ jobs:
       with:
         dotnet-version: 7.0.200
     - name: Restore dependencies
-      working-directory: ./src/UpdateDDNS
       run: dotnet restore 
     - name: Build
-      working-directory: ./src/UpdateDDNS
       run: dotnet build --no-restore UpdateDDNS.sln
     - name: Test
       run: dotnet test --no-build --verbosity normal
