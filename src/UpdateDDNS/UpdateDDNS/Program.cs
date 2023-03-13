@@ -176,7 +176,7 @@ namespace BOG.UpdateDDNS
 
 							var client = new HttpClient();
 							var ipAddress = client.GetStringAsync(ipCheckURL).GetAwaiter().GetResult();
-							Console.Write(string.Format($"Validating answer: {1}", ipAddress));
+							Console.Write($"Validating answer: {ipAddress}");
 							var ipParsed = IPAddress.Parse(ipAddress);
 							var isValid = false;
 							switch (usingIPv6)
