@@ -64,20 +64,29 @@ c:\users\\*username*
 folder.  *This override is mostly used for cron on a Linux platform, to ensure that 
 local and cron launches (root user) use the same directory.*
 
+### -6 true|false, --useIP6 true|false
+
+- *(optional)* Overrides the use of IPv4 for updates in favor of IPv6.  *NOTE: Both are tracked separately, but only one can be updated per execution.*
+
+### -f true|false, --force true|false
+
+- *(optional)* Will always update the DDNS server, not just when a change of IP Address is detected.
+
 ### Starting 
 
 BOG.UpdateDDNS --service GoogleDomains
 
-When the application is executed, the application loads the configuration file from the
-default directory or the directory specified in the path parameter.  It then locates the
-configuration for the service, and does the following:
+The above line represents the minimum command line needed. When the application is 
+executed, the application loads the configuration file from the default directory
+or the directory specified in the path parameter.  It then locates the configuration
+for the service, and does the following:
 
-- Calls the google checkip endpoint of Google domains to acquire the current IP used
-for the WAN address.
+- Calls the ipify endpoint to acquire the current IP used for the WAN address.
 - Compares the IP value returned by the query to the last recorded IP address in use (stored)
 in the configuration for the service.
-- If it has changed, it calls the dynamic DNS service to update the public IP address (i.e.
-it excutes the URL in its configuration with the IP address in the {IP} placeholder).
+- If it has changed or --force is specificed, it calls the dynamic DNS service to 
+update the public IP address (i.e. it excutes the URL in its configuration with
+the ipify IP address answer in the {IP} placeholder).
 
 The application will also append to a log file, which has the same root name 
 and folder as the json configuration file but uses the extension "log".
@@ -101,7 +110,7 @@ for %f in (linux-arm linux-x64) do dotnet publish -c release -o publish\%f -r %f
 ```
 
 I recommend deployment as follows under the linux account's $HOME folder:
-- create a folder named *config*, andd copy the file BOG.UpdateDDNS.json to this folder, and set the DDNS service parameters
+- create a folder named *config*, andd copy the file BOG.UpdateDDNS.json to this folder, setting the DDNS service parameters in the file.
 - create a folder named *apps*
 - create a folder named *updateddns* under the apps folder, and copy the deployment file set to that folder.
 
@@ -113,7 +122,7 @@ Use *sudo crontab -e* to add the following lines (note: subsititute pi for the a
 2,17,32,47 * * * * /home/pi/apps/updateddns/BOG.UpdateDDNS --service DuckDns --path /home/pi/config
 ```
 
-*Note: UpdateDDNS does a soft update. It will always first check the current public IP address for the dynamic dns host name, and only update
+*Note: UpdateDDNS does a soft update by default. It will always first check the current public IP address for the dynamic dns host name, and only update
 the DDNS service if a difference is detected.  The 15-minute interval will almost always be only a check.*
 
 ***
