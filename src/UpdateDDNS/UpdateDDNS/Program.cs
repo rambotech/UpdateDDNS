@@ -94,8 +94,8 @@ namespace BOG.UpdateDDNS
 					updateAction.Notes = error;
 					Help();
 				}
-				configFile = BuildConfigFilePath() + Path.GetFileNameWithoutExtension(a.Filename) + ".json";
-				logFile = BuildConfigFilePath() + Path.GetFileNameWithoutExtension(a.Filename) + ".log";
+				configFile = BuildConfigFilePath() + Path.GetFileNameWithoutExtension(a.Filename).ToLower() + ".json";
+				logFile = BuildConfigFilePath() + Path.GetFileNameWithoutExtension(a.Filename).ToLower() + ".log";
 
 				if (updateAction.Result == UpdateAction.State.Unknown)
 				{
