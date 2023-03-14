@@ -1,3 +1,8 @@
+| *branch* | Currently |
+| :--- | :---: |
+| master | [![Build status](https://github.com/rambotech/UpdateDDNS/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/rambotech/UpdateDDNS) |
+| develop | [![Build status](https://github.com/rambotech/UpdateDDNS/actions/workflows/dotnet.yml/badge.svg?branch=develop)](https://github.com/rambotech/UpdateDDNS/tree/develop) |
+
 # UpdateDDNS
 
 A simple and straight-forward dotnet core console app, which will update any DDNS 
