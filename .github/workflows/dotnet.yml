@@ -5,9 +5,9 @@ name: .NET
 
 on:
   push:
-    branches: [ "master", "release", "develop" ]
+    branches: [ "develop" ]
   pull_request:
-    branches: [ "master", "release", "develop" ]
+    branches: [ "master", "release" ]
 
 defaults:
   run:
