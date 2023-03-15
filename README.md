@@ -1,6 +1,6 @@
 | *branch* | Currently |
 | :--- | :---: |
-| master | [![Build status](https://github.com/rambotech/UpdateDDNS/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/rambotech/UpdateDDNS) |
+| master | [![Build status](https://github.com/rambotech/UpdateDDNS/actions/workflows/dotnet.yml/badge.svg?branch=master)](https://github.com/rambotech/UpdateDDNS) |
 | release | [![Build status](https://github.com/rambotech/UpdateDDNS/actions/workflows/dotnet.yml/badge.svg?branch=develop)](https://github.com/rambotech/UpdateDDNS/tree/release) |
 | develop | [![Build status](https://github.com/rambotech/UpdateDDNS/actions/workflows/dotnet.yml/badge.svg?branch=develop)](https://github.com/rambotech/UpdateDDNS/tree/develop) |
 
