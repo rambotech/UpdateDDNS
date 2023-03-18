@@ -11,7 +11,7 @@ on:
 
 defaults:
   run:
-    working-directory: src/UpdateDDNS
+    working-directory: src/BOG.SwissArmyKnife
 
 jobs:
   build:
@@ -26,6 +26,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore 
     - name: Build
-      run: dotnet build --no-restore UpdateDDNS.sln
+      run: dotnet build --no-restore BOG.SwissArmyKnife.sln
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity normal BOG.SwissArmyKnife.Test/BOG.SwissArmyKnife.Test/.csproj
