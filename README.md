@@ -1,8 +1,8 @@
 | *branch* | Currently |
-| :--- | :---: |
-| master | [![Build status](https://github.com/rambotech/UpdateDDNS/actions/workflows/dotnet.yml/badge.svg?branch=master)](https://github.com/rambotech/UpdateDDNS) |
-| release | [![Build status](https://github.com/rambotech/UpdateDDNS/actions/workflows/dotnet.yml/badge.svg?branch=develop)](https://github.com/rambotech/UpdateDDNS/tree/release) |
-| develop | [![Build status](https://github.com/rambotech/UpdateDDNS/actions/workflows/dotnet.yml/badge.svg?branch=develop)](https://github.com/rambotech/UpdateDDNS/tree/develop) |
+| :---: | :---: |
+| master | [![Build status](https://github.com/rambotech/UpdateDDNS/actions/workflows/dotnet.yml/badge.svg?branch=master)](https://github.com/rambotech/UpdateDDNS/blob/develop/.github/workflows/dotnet.yml) |
+| release | [![Build status](https://github.com/rambotech/UpdateDDNS/actions/workflows/dotnet.yml/badge.svg?branch=develop)](https://github.com/rambotech/UpdateDDNS/blob/release/.github/workflows/dotnet.yml) |
+| develop | [![Build status](https://github.com/rambotech/UpdateDDNS/actions/workflows/dotnet.yml/badge.svg?branch=develop)](https://github.com/rambotech/UpdateDDNS/blob/master/.github/workflows/dotnet.yml) |
 
 # UpdateDDNS
 
