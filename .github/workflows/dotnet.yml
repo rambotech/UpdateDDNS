@@ -11,7 +11,7 @@ on:
 
 defaults:
   run:
-    working-directory: src/BOG.SwissArmyKnife
+    working-directory: src/UpdateDDNS
 
 jobs:
   build:
