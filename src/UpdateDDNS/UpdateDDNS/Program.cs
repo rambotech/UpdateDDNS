@@ -63,14 +63,14 @@ namespace BOG.UpdateDDNS
 		static void Help()
 		{
 			Console.WriteLine();
-			Console.WriteLine("BOG.UpdateDDNS [-p {path}] [-6 true|false] --s {serviceName} [-f true|false]");
+			Console.WriteLine("BOG.UpdateDDNS [-p {path}] [-6 true|false] -s {serviceName} [-f true|false]");
 			Console.WriteLine("  -p, --path: (optional) overrides the default path for config and log files.");
 			Console.WriteLine("  -6, --useIP6: (optional) true for IPv6, otherwise IPv4 (default)");
 			Console.WriteLine("  -s, --service: name of DDNS service name to update.");
 			Console.WriteLine("  -f, --force: (optional) true to always update DDNS server (default:when changed).");
-		}
+        }
 
-		static void Main(string[] args)
+        static void Main(string[] args)
 		{
 			var usingIPv6 = false;
 			var forceUpdate = false;

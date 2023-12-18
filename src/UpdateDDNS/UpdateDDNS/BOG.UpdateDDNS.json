@@ -1,8 +1,16 @@
 [
 	{
-		"Name": "GoogleDomainsDDNS",
+		"Name": "GoogleDomainsDDNS-1",
 		"Url": "https://user:password@domains.google.com/nic/update?hostname=servername1.hostname.net&myip={IP}",
 		"Domain": "servername1.hostname.net",
+		"PreviousWanIP4": "",
+		"CurrentWanIP4": "",
+		"LastRun": "2019-08-07T17:19:37.4445957-04:00"
+	},
+	{
+		"Name": "GoogleDomainsDDNS-2",
+		"Url": "https://user:password@domains.google.com/nic/update?hostname=servername1.hostname.net&myip={IP}",
+		"Domain": "servername2.hostname.net",
 		"PreviousWanIP4": "",
 		"CurrentWanIP4": "",
 		"LastRun": "2019-08-07T17:19:37.4445957-04:00"
